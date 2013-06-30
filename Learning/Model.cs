@@ -24,11 +24,10 @@ namespace Learning
     }
 
     /* Model writer class */
-    public class ModelWriter<TT, TV> where TT : IComparable<TT>
-                                   where TV : IComparable<TV>
+    public class ModelWriter<TT> where TT : IComparable<TT>
     {
         /* Static write model function, creates a model and saves it in the path */
-        public static bool WriteModel(KeyValuePair<List<DTree<TT, TV>>, double[]> model, string path) {
+        public static bool WriteModel(KeyValuePair<List<DTree<TT>>, double[]> model, string path) {
             try {
                 var modelStream = new FileStream(path, FileMode.OpenOrCreate);
                 var writer = new StreamWriter(modelStream);
@@ -66,7 +65,7 @@ namespace Learning
         }
 
         /* Helper function for WriteModel */
-        private static void writeClassifications(Node<TT, TV> node, ref StreamWriter writer) {
+        private static void writeClassifications(Node<TT> node, ref StreamWriter writer) {
             writer.Write("\tclassifications:");
             for (var i = 0; i < node.Children.Count - 1; i++) {
                 writer.Write("" + node.Children[i].Classification + ",");
@@ -81,11 +80,10 @@ namespace Learning
     }
 
     /* Model reader class */
-    public class ModelReader<TT, TV> where TT : IComparable<TT>
-                                   where TV : IComparable<TV>
+    public class ModelReader<TT> where TT : IComparable<TT>
     {
         /* Read a Model from the given file */
-        public static KeyValuePair<List<DTree<TT, TV>>, double[]> ReadModel(string path) {
+        public static KeyValuePair<List<DTree<TT>>, double[]> ReadModel(string path) {
             var modelStream = new FileStream(path, FileMode.Open);
             var reader = new StreamReader(modelStream);
             
@@ -97,7 +95,7 @@ namespace Learning
             var inModel = false;
             var inAttribute = false;
 
-            var trees = new List<DTree<TT, TV>>();
+            var trees = new List<DTree<TT>>();
             var weights = new List<double>();
             var curAttr = -1;
             var s = line = reader.ReadLine();
@@ -106,17 +104,17 @@ namespace Learning
                     if (line.Length > 16 && line.Substring(0, 16).CompareTo("\tclassifications") == 0) {
                         var chars = line.Substring(17).Split(',');
                         var c = 0;
-                        Node<TT, TV> temp;
+                        Node<TT> temp;
                         do {
-                            temp = new Node<TT, TV>();
-                            temp.SetClassification((TV)Convert.ChangeType(chars[c], typeof(TV)));
+                            temp = new Node<TT>();
+                            temp.SetClassification(Convert.ToInt32(chars[c]));
                             trees[curAttr].Root.AddChild(temp);
                             c++;
                         } while (chars[c][chars[c].Length - 1] != '.');
 
                         // add final classification
-                        temp = new Node<TT, TV>();
-                        temp.SetClassification((TV)Convert.ChangeType(chars[c], typeof(TV)));
+                        temp = new Node<TT>();
+                        temp.SetClassification(Convert.ToInt32(chars[c]));
                         trees[curAttr].Root.AddChild(temp);
                     } else if (line.Length > 7 && line.Substring(0, 7).CompareTo("\tweight") == 0) {
                         var weightString = line.Substring(8, line.Length - 9);
@@ -126,7 +124,7 @@ namespace Learning
                         if (inAttribute) {
                             throw new InvalidDataException("Invalid model format");
                         }
-                        trees.Add(new DTree<TT, TV>());
+                        trees.Add(new DTree<TT>());
                         curAttr++;
                         inAttribute = true;
                     } else if (line.CompareTo(Model.EndAttribute) == 0) {
@@ -164,7 +162,7 @@ namespace Learning
                     throw new InvalidDataException("Invalid model format");
                 }
             }
-            return new KeyValuePair<List<DTree<TT, TV>>, double[]>(trees, weights.ToArray());
+            return new KeyValuePair<List<DTree<TT>>, double[]>(trees, weights.ToArray());
         }
 
     }

@@ -12,8 +12,7 @@ using System.Threading.Tasks;
 namespace Learning
 {
     /* Example class */
-    public class Example<TT, TV> where TT : System.IComparable<TT>
-                               where TV : System.IComparable<TV>
+    public class Example<TT> where TT : System.IComparable<TT>
     {
         // index in larger example list
 
@@ -24,7 +23,7 @@ namespace Learning
         public List<Attribute<TT>> Attributes;
 
         // final classification
-        public TV Classification;
+        public int Classification;
 
         // getters and setters
         public int Index { get; set; }
@@ -35,7 +34,7 @@ namespace Learning
 
         /* Example constructor fills in attributes list and other fields */
         public Example(IReadOnlyList<string> questions, IReadOnlyList<TT> selectedAnswers, IReadOnlyCollection<List<TT>> attributeAnswers,
-            TV output, int index, int id){
+            int output, int index, int id){
             if ((questions.Count != attributeAnswers.Count) || (questions.Count != selectedAnswers.Count)){
                 throw new ArgumentException(
                     "The number of questions must be the same as the number of lists of answers and the number of selected answers");
@@ -55,7 +54,7 @@ namespace Learning
         }
 
         /* Call the other constructor with a default id of 0 */
-        public Example(IReadOnlyList<string> questions, IReadOnlyList<TT> selectedAnswers, IReadOnlyCollection<List<TT>> attributeAnswers, TV output, int index) :
+        public Example(IReadOnlyList<string> questions, IReadOnlyList<TT> selectedAnswers, IReadOnlyCollection<List<TT>> attributeAnswers, int output, int index) :
             this(questions, selectedAnswers, attributeAnswers, output, index, 0) {  }
 
         /* Determine if the example contains the input answer to the input question */

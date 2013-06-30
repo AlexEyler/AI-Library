@@ -10,8 +10,7 @@ using System.Collections.Generic;
 namespace Learning.DataWrapper
 {
     /* Abstract class to load data from files */
-    public abstract class DataWrapper<TT, TV> where TT : IComparable<TT>
-                                            where TV : IComparable<TV>
+    public abstract class DataWrapper<TT> where TT : IComparable<TT>
     {
         // type of dataWrapper
         public string Type;
@@ -20,17 +19,28 @@ namespace Learning.DataWrapper
         public List<List<TT>> AttributeAnswers;
         public List<Attribute<TT>> Attributes;
 
-        /* Must constructor with the type of data wrapper */
+        // counts of classifications 
+        public int[] ClassificationsCount;
+
+        /* Must construct with the type of data wrapper */
         protected DataWrapper(string type) {
             this.Type = type;
             AttributeAnswers = new List<List<TT>>();
             Attributes = new List<Attribute<TT>>();
         }
 
+        /* Keep track of whether the different types of classifications */
+        public void ApplyClassification(int classification) {
+            ClassificationsCount[classification]++;
+        }
+
         /* Load training set from a file */
-        abstract public List<Example<TT, TV>> LoadTrainingSet(string filename);
+        abstract public List<Example<TT>> LoadTrainingSet(string filename);
 
         /* Load data from a file to predict */
-        abstract public List<Example<TT, TV>> LoadData(string filename);
+        abstract public List<Example<TT>> LoadData(string filename);
+
+        /* Return a determination for the future */
+        public abstract string Determiniation();
     }
 }
