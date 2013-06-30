@@ -12,45 +12,39 @@ using System.Threading.Tasks;
 namespace Learning
 {
     /* DTree Class (really just DStumps for now) */
-    public class DTree<TT, TV> where TT : IComparable<TT>
-                          where TV : IComparable<TV>
+    public class DTree<TT> where TT : IComparable<TT>
     {
-        // root node
-        private readonly Node<TT, TV> root;
-
         // list of all possible classifications
-        private readonly List<TV> classifications;
+        private readonly List<int> classifications;
 
         // getter
-        public Node<TT, TV> Root {
-            get { return this.root; }
-        }
+        public Node<TT> Root { get; set; }
 
         /* Default constructor */
         public DTree() {
-            root = new Node<TT, TV>();
+            Root = new Node<TT>();
         }
 
         /* Build the DStump when we create a DTree object */
-        public DTree(List<Example<TT, TV>> examples, List<Attribute<TT>> attributes, double[] weights, List<TV> classifications) {
+        public DTree(IList<Example<TT>> examples, IEnumerable<Attribute<TT>> attributes, IList<double> weights, List<int> classifications) {
             this.classifications = classifications;
             if (weights.Count() != examples.Count) {
                 throw new ArgumentException("There must be a weight for each example");
             }
-            root = buildDStump(examples, attributes, weights);
+            Root = buildDStump(examples, attributes, weights);
         }
 
         /* Build-DStump function */
-        private Node<TT,TV> buildDStump(List<Example<TT, TV>> examples, List<Attribute<TT>> attributes, double[] weights) {
+        private Node<TT> buildDStump(IList<Example<TT>> examples, IEnumerable<Attribute<TT>> attributes, IList<double> weights) {
             // find best attribute
             var b = bestAttribute(examples, attributes, weights);
-            var node = new Node<TT, TV>(b);
+            var node = new Node<TT>(b);
             foreach (var selectedExamples in 
                 b.Answers.Select(answer => getSelectedExamples(examples, b.Question, answer))){
 
                 if (selectedExamples.Count == 0) {
                     // examples = {}
-                    var child = new Node<TT, TV>();
+                    var child = new Node<TT>();
                     child.SetClassification(classifications[new Random().Next(classifications.Count - 1)]);
                     node.AddChild(child);
                 } else {
@@ -59,7 +53,7 @@ namespace Learning
                     var agreementFlag = selectedExamples.All(example => example.Classification.Equals(output));
                     if (agreementFlag) {
                         // set classification to agreement
-                        var child = new Node<TT,TV>();
+                        var child = new Node<TT>();
                         child.SetClassification(output);
                         node.AddChild(child);
                     } else {
@@ -69,7 +63,7 @@ namespace Learning
                             selectedExamples.Select(t => classifications.IndexOf(t.Classification))){
                             ws[idx] += weights[idx];
                         }
-                        var child = new Node<TT,TV>();
+                        var child = new Node<TT>();
                         var maxIndex = ws.Select( (value, index) => new { Value = value, Index = index} )
                             .Aggregate
                             ( (x, y) => (x.Value > y.Value) ? x : y)
@@ -83,12 +77,12 @@ namespace Learning
         }
 
         /* Get the examples whose answer to the input question is the input answer */
-        private List<Example<TT,TV>> getSelectedExamples(IEnumerable<Example<TT, TV>> examples, string question, TT answer){
+        private List<Example<TT>> getSelectedExamples(IEnumerable<Example<TT>> examples, string question, TT answer) {
             return examples.Where(example => example.ContainsAnswer(question, answer)).ToList();
         }
 
         /* Find the best attribute to use (the lowest entropy) */
-        private Attribute<TT> bestAttribute(List<Example<TT,TV>> examples, List<Attribute<TT>> attributes, double[] weights) {
+        private Attribute<TT> bestAttribute(IList<Example<TT>> examples, IEnumerable<Attribute<TT>> attributes, IList<double> weights) {
             var bestE = Double.MaxValue;
             Attribute<TT> bestAttr = null;
             foreach (var attr in attributes) {
@@ -113,14 +107,14 @@ namespace Learning
         }
 
         /* Find the entropy of a list of examples and weights */
-        private double entropy(IReadOnlyList<Example<TT, TV>> examples, IList<double> weights) {
+        private double entropy(IList<Example<TT>> examples, IList<double> weights) {
             var ws = new double[classifications.Count];
             var totalWeight = weights.Sum();
             for (var c = 0; c < examples.Count; c++) {
                 var idx = classifications.IndexOf(examples[c].Classification);
                 ws[idx] += weights[c];
             }
-            return ws.Aggregate(0.0, (current, w) => current - (w/totalWeight) * Math.Log(w/totalWeight, classifications.Count));
+            return ws.Where(d => Math.Abs(d - 0.0) > .000000000001).Aggregate(0.0, (current, d) => current - (d/totalWeight)*Math.Log(d/totalWeight, 2));
         }
     }
 }

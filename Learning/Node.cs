@@ -12,19 +12,18 @@ using System.Threading.Tasks;
 namespace Learning
 {
     /* Node class */
-    public class Node<TT, TV> where TT : IComparable<TT>
-                            where TV : IComparable<TV>
+    public class Node<TT> where TT : IComparable<TT>
     {
         // the node's attribute
         private Attribute<TT> attribute;
 
         // the node's children (currently can only be 
         // classified nodes)
-        public List<Node<TT, TV>> Children;
+        public List<Node<TT>> Children;
 
-        // the classification of the node (initially false,
+        // the classification of the node (initially -1,
         // but once it is set, it "becomes" the node)
-        public TV Classification;
+        public int Classification;
 
         // getters and setters
         public Attribute<TT> Attribute {
@@ -35,26 +34,26 @@ namespace Learning
         /* Default node constructor */
         public Node() {
             this.attribute = null;
-            this.Children = new List<Node<TT,TV>>();
-            this.Classification = default(TV);
+            this.Children = new List<Node<TT>>();
+            this.Classification = -1;
         }
 
         /* Construct node with an attribute */
         public Node(Attribute<TT> attr) {
             this.attribute = attr;
-            this.Children = new List<Node<TT,TV>>();
-            this.Classification = default(TV);
+            this.Children = new List<Node<TT>>();
+            this.Classification = -1;
         }
 
         /* Add a child node to the node class */
-        public void AddChild(Node<TT,TV> child) {
+        public void AddChild(Node<TT> child) {
             Children.Add(child);
         }
 
         /* Set a classification for the node, this makes 
          * the node a classified (leaf) node and attribute and children
          * become null */
-        public void SetClassification(TV classification) {
+        public void SetClassification(int classification) {
             this.Classification = classification;
             this.attribute = null;
             this.Children = null;
@@ -62,7 +61,7 @@ namespace Learning
 
         /* Determine if a node outputs the correct classification
          * compared to a given example */
-        public bool TestNode(Example<TT,TV> example) {
+        public bool TestNode(Example<TT> example) {
             foreach (var a in example.Attributes) {
                 if (a.Question != attribute.Question) continue;
                 var answer = a.SelectedAnswer;

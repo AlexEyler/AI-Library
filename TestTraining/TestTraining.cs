@@ -26,12 +26,12 @@ namespace TestTraining
 
             var modelFilename = args[1];
             var dataFilename = args[2];
-            var models = new KeyValuePair<List<DTree<string, bool>>, double[]>();
-            List<Example<string, bool>> examples = null;
+            var models = new KeyValuePair<List<DTree<string>>, double[]>();
+            List<Example<string>> examples = null;
 
             var type = Type.GetType("Learning.DataWrapper" + args[0] + ", Learning");
             if (type != null){
-                var dw = (DataWrapper<string, bool>)System.Activator.CreateInstance(type);
+                var dw = (DataWrapper<string>)System.Activator.CreateInstance(type);
                 try {
                     models = loadModels(modelFilename);
                     examples = dw.LoadTrainingSet(dataFilename);
@@ -72,8 +72,8 @@ namespace TestTraining
         }
 
         /* Load stumps from a ModelReader */
-        static KeyValuePair<List<DTree<string, bool>>, double[]> loadModels(string modelFilename) {
-            return ModelReader<string, bool>.ReadModel(modelFilename);
+        static KeyValuePair<List<DTree<string>>, double[]> loadModels(string modelFilename) {
+            return ModelReader<string>.ReadModel(modelFilename);
         }
 
     }

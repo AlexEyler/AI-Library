@@ -40,7 +40,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attribute.cs" />
-    <Compile Include="Classification.cs" />
     <Compile Include="DataWrapper\DowData.cs" />
     <Compile Include="DTree.cs" />
     <Compile Include="Example.cs" />
