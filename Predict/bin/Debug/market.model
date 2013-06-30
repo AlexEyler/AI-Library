@@ -1,0 +1,72 @@
+StartModels:
+StartModel:
+StartAttribute:
+	CSCO:up_v-low,up_low,up_med,up_high,up_v-high,stay,down_v-low,down_low,down_med,down_high,down_v-high.
+	classifications:True,True,True,True,True,False,False,False,False,False,False.
+	weight:2.30012372456901.
+EndAttribute
+EndModel
+StartModel:
+StartAttribute:
+	AXP:up_v-low,up_low,up_med,up_high,up_v-high,stay,down_v-low,down_low,down_med,down_high,down_v-high.
+	classifications:True,True,False,False,False,True,False,False,False,False,False.
+	weight:1.8952933293897.
+EndAttribute
+EndModel
+StartModel:
+StartAttribute:
+	MSFT:up_v-low,up_low,up_med,up_high,up_v-high,stay,down_v-low,down_low,down_med,down_high,down_v-high.
+	classifications:True,True,True,True,True,True,True,True,True,False,False.
+	weight:1.451338516716.
+EndAttribute
+EndModel
+StartModel:
+StartAttribute:
+	CAT:up_v-low,up_low,up_med,up_high,up_v-high,stay,down_v-low,down_low,down_med,down_high,down_v-high.
+	classifications:True,False,True,True,True,True,False,False,False,True,True.
+	weight:1.4377836608946.
+EndAttribute
+EndModel
+StartModel:
+StartAttribute:
+	WMT:up_v-low,up_low,up_med,up_high,up_v-high,stay,down_v-low,down_low,down_med,down_high,down_v-high.
+	classifications:False,True,False,False,False,True,False,False,False,False,False.
+	weight:0.926088078620731.
+EndAttribute
+EndModel
+StartModel:
+StartAttribute:
+	GE:up_v-low,up_low,up_med,up_high,up_v-high,stay,down_v-low,down_low,down_med,down_high,down_v-high.
+	classifications:True,True,False,True,False,True,True,True,True,True,False.
+	weight:0.861605118478365.
+EndAttribute
+EndModel
+StartModel:
+StartAttribute:
+	INTC:up_v-low,up_low,up_med,up_high,up_v-high,stay,down_v-low,down_low,down_med,down_high,down_v-high.
+	classifications:True,True,True,True,True,True,False,True,False,False,False.
+	weight:0.928136881432225.
+EndAttribute
+EndModel
+StartModel:
+StartAttribute:
+	AA:up_v-low,up_low,up_med,up_high,up_v-high,stay,down_v-low,down_low,down_med,down_high,down_v-high.
+	classifications:True,True,False,False,True,False,True,True,False,False,False.
+	weight:0.644359278032707.
+EndAttribute
+EndModel
+StartModel:
+StartAttribute:
+	AA:up_v-low,up_low,up_med,up_high,up_v-high,stay,down_v-low,down_low,down_med,down_high,down_v-high.
+	classifications:False,True,True,True,True,False,False,False,True,True,False.
+	weight:0.679643698789732.
+EndAttribute
+EndModel
+StartModel:
+StartAttribute:
+	CVX:up_v-low,up_low,up_med,up_high,up_v-high,stay,down_v-low,down_low,down_med,down_high,down_v-high.
+	classifications:True,True,True,True,True,True,False,False,True,True,True.
+	weight:0.701690420137162.
+EndAttribute
+EndModel
+EndModels

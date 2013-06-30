@@ -1,0 +1,5 @@
+C:\Users\Alex\Documents\School\AI\Project 2\MarketLearner\Learning\bin\Debug\Learning.dll
+C:\Users\Alex\Documents\School\AI\Project 2\MarketLearner\Learning\bin\Debug\Learning.pdb
+C:\Users\Alex\Documents\School\AI\Project 2\MarketLearner\Learning\obj\Debug\Learning.dll
+C:\Users\Alex\Documents\School\AI\Project 2\MarketLearner\Learning\obj\Debug\Learning.pdb
+C:\Users\Alex\Documents\School\AI\Project 2\MarketLearner\Learning\obj\Debug\Learning.csprojResolveAssemblyReference.cache

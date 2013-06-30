@@ -1,0 +1,23 @@
+StartModels:
+StartModel:
+StartAttribute:
+	health:recommended,priority,not_recom.
+	classifications:True,True,False.
+	weight:0.99999999999987.
+EndAttribute
+EndModel
+StartModel:
+StartAttribute:
+	health:recommended,priority,not_recom.
+	classifications:True,True,False.
+	weight:4.89483569782836E-13.
+EndAttribute
+EndModel
+StartModel:
+StartAttribute:
+	health:recommended,priority,not_recom.
+	classifications:True,True,False.
+	weight:-8.45704597007386E-13.
+EndAttribute
+EndModel
+EndModels
