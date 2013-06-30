@@ -41,13 +41,13 @@
   <ItemGroup>
     <Compile Include="Attribute.cs" />
     <Compile Include="Classification.cs" />
-    <Compile Include="DowData.cs" />
+    <Compile Include="DataWrapper\DowData.cs" />
     <Compile Include="DTree.cs" />
     <Compile Include="Example.cs" />
-    <Compile Include="DataWrapper.cs" />
+    <Compile Include="DataWrapper\DataWrapper.cs" />
     <Compile Include="Model.cs" />
     <Compile Include="Node.cs" />
-    <Compile Include="NurseryData.cs" />
+    <Compile Include="DataWrapper\NurseryData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

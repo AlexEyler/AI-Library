@@ -1,3 +1,4 @@
 D:\School\AI\Project 2\MarketLearner\AI-Library\MarketLearnerExample\bin\Debug\MarketLearner.exe.config
 D:\School\AI\Project 2\MarketLearner\AI-Library\MarketLearnerExample\obj\Debug\MarketLearner.exe
 D:\School\AI\Project 2\MarketLearner\AI-Library\MarketLearnerExample\obj\Debug\MarketLearner.pdb
+D:\School\AI\Project 2\MarketLearner\AI-Library\MarketLearnerExample\obj\Debug\MarketLearnerExample.csprojResolveAssemblyReference.cache
