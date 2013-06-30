@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Learning", "Learning\Learni
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Predict", "Predict\Predict.csproj", "{9EBD0458-313A-4001-A6B4-5EE45C93DA5A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MarketLearnerExample", "MarketLearnerExample\MarketLearnerExample.csproj", "{CCE13F71-BF8A-4174-A1A3-0621DF026726}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{9EBD0458-313A-4001-A6B4-5EE45C93DA5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9EBD0458-313A-4001-A6B4-5EE45C93DA5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9EBD0458-313A-4001-A6B4-5EE45C93DA5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCE13F71-BF8A-4174-A1A3-0621DF026726}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCE13F71-BF8A-4174-A1A3-0621DF026726}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCE13F71-BF8A-4174-A1A3-0621DF026726}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCE13F71-BF8A-4174-A1A3-0621DF026726}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
