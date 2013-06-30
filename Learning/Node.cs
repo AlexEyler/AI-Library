@@ -12,22 +12,22 @@ using System.Threading.Tasks;
 namespace Learning
 {
     /* Node class */
-    public class Node<T, V> where T : IComparable<T>
-                            where V : IComparable<V>
+    public class Node<TT, TV> where TT : IComparable<TT>
+                            where TV : IComparable<TV>
     {
         // the node's attribute
-        private Attribute<T> attribute;
+        private Attribute<TT> attribute;
 
         // the node's children (currently can only be 
         // classified nodes)
-        public List<Node<T, V>> children;
+        public List<Node<TT, TV>> Children;
 
         // the classification of the node (initially false,
         // but once it is set, it "becomes" the node)
-        public V classification;
+        public TV Classification;
 
         // getters and setters
-        public Attribute<T> Attribute {
+        public Attribute<TT> Attribute {
             get { return this.attribute; }
             set { this.attribute = value; }
         }
@@ -35,63 +35,61 @@ namespace Learning
         /* Default node constructor */
         public Node() {
             this.attribute = null;
-            this.children = new List<Node<T,V>>();
-            this.classification = default(V);
+            this.Children = new List<Node<TT,TV>>();
+            this.Classification = default(TV);
         }
 
         /* Construct node with an attribute */
-        public Node(Attribute<T> attr) {
+        public Node(Attribute<TT> attr) {
             this.attribute = attr;
-            this.children = new List<Node<T,V>>();
-            this.classification = default(V);
+            this.Children = new List<Node<TT,TV>>();
+            this.Classification = default(TV);
         }
 
         /* Add a child node to the node class */
-        public void AddChild(Node<T,V> child) {
-            children.Add(child);
+        public void AddChild(Node<TT,TV> child) {
+            Children.Add(child);
         }
 
         /* Set a classification for the node, this makes 
          * the node a classified (leaf) node and attribute and children
          * become null */
-        public void SetClassification(V classification) {
-            this.classification = classification;
+        public void SetClassification(TV classification) {
+            this.Classification = classification;
             this.attribute = null;
-            this.children = null;
+            this.Children = null;
         }
 
         /* Determine if a node outputs the correct classification
          * compared to a given example */
-        public bool TestNode(Example<T,V> example) {
-            foreach (Attribute<T> a in example.Attributes) {
-                if (a.Question == attribute.Question) {
-                    T answer = a.SelectedAnswer;
-                    int c = 0;
-                    foreach (T ans in attribute.Answers) {
-                        if (ans.Equals(answer)) {
-                            return example.Classification.Equals(children[c].classification);
-                        }
-                        c++;
-                    }
-                    break;
+        public bool TestNode(Example<TT,TV> example) {
+            foreach (var a in example.Attributes) {
+                if (a.Question != attribute.Question) continue;
+                var answer = a.SelectedAnswer;
+                var c = 0;
+                foreach (var ans in attribute.Answers) {
+                    if (ans.Equals(answer))
+                        return example.Classification.Equals(Children[c].Classification);
+                    c++;
                 }
+                break;
             }
             return false;
         }
 
         /* ToString method */
         public override string ToString() {
-            string returnString = "";
+            var returnString = "";
             if (attribute != null) {
                 returnString += attribute.Question + "?\n";
-                int c = 0;
-                foreach (T answer in attribute.Answers) {
+                var c = 0;
+                foreach (var answer in attribute.Answers) {
                     returnString += "   " + answer + ": ";
-                    returnString += children[c] + "\n";
+                    returnString += Children[c] + "\n";
                     c++;
                 }
             } else {
-                returnString += classification;
+                returnString += Classification;
             }
             return returnString;
         }

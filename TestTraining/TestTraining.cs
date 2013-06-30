@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Learning;
 using System.IO;
+using Learning.DataWrapper;
 
 namespace TestTraining
 {
@@ -17,49 +18,54 @@ namespace TestTraining
     class TestTraining
     {
         /* Output the percentage of correct classifications from an input model file */
-        static void Main(string[] args) {
+        public static void Main(string[] args) {
             if (args.Length != 3) {
                 Console.WriteLine("Usage: TestTraining type [model file] [data file]");
                 return;
             }
 
-            string modelFilename = args[1];
-            string dataFilename = args[2];
-            KeyValuePair<List<DTree<string, bool>>, double[]> models;
-            List<Example<string, bool>> examples;
+            var modelFilename = args[1];
+            var dataFilename = args[2];
+            var models = new KeyValuePair<List<DTree<string, bool>>, double[]>();
+            List<Example<string, bool>> examples = null;
 
-            Type type = Type.GetType("Learning." + args[0] + ", Learning");
-            DataWrapper<string, bool> dw = (DataWrapper<string, bool>)System.Activator.CreateInstance(type);
-            try {
-                models = loadModels(modelFilename);
-                examples = dw.LoadTrainingSet(dataFilename);
-            } catch (IOException io) {
-                Console.WriteLine(io);
-                Console.ReadKey();
-                return;
+            var type = Type.GetType("Learning.DataWrapper" + args[0] + ", Learning");
+            if (type != null){
+                var dw = (DataWrapper<string, bool>)System.Activator.CreateInstance(type);
+                try {
+                    models = loadModels(modelFilename);
+                    examples = dw.LoadTrainingSet(dataFilename);
+                } catch (IOException io) {
+                    Console.WriteLine(io);
+                    Console.ReadKey();
+                    return;
+                }
             }
 
             // Find the number of correct classifications
-            List<DTree<string, bool>> trees = models.Key;
-            double[] weights = models.Value;
-            int correct = 0;
-            int total = 0;
-            foreach (Example<string, bool> example in examples) {
-                total++;
-                double weight = 0.0;
-                for (int i = 0; i < weights.Length; i++) {
-                    bool eq = trees[i].Root.TestNode(example);
-                    if (eq) {
-                        weight += weights[i];
-                    } else {
-                        weight -= weights[i];
+            var trees = models.Key;
+            var weights = models.Value;
+            var correct = 0;
+            var total = 0;
+
+            if (examples != null)
+                foreach (var example in examples){
+                    total++;
+                    var weight = 0.0;
+                    for (var i = 0; i < weights.Length; i++){
+                        var eq = trees[i].Root.TestNode(example);
+                        if (eq){
+                            weight += weights[i];
+                        } else{
+                            weight -= weights[i];
+                        }
+                    }
+                    if (weight > 0.0){
+                        correct++;
                     }
                 }
-                if (weight > 0.0) {
-                    correct++;
-                } 
-            }
-            double percentage = correct / (total * 1.0);
+
+            var percentage = correct / (total * 1.0);
             Console.WriteLine("This model is " + percentage * 100 + "% accurate (according to the test data)");
             Console.ReadKey();
             

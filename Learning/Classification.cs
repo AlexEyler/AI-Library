@@ -39,14 +39,11 @@ namespace Learning
          * n: Classification n
          * */
         public static List<string> ReadClassifications(string path) {
-            List<string> classifications = new List<string>();
-            using (StreamReader reader = new StreamReader(path)) {
+            var classifications = new List<string>();
+            using (var reader = new StreamReader(path)) {
                 string line;
-                int c = 0;
-                while ((line = reader.ReadLine()) != null) {
+                while ((line = reader.ReadLine()) != null)
                     classifications.Add(line);
-                    c++;
-                }
             }
             return classifications;
         }

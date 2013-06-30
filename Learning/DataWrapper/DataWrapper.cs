@@ -3,36 +3,34 @@
  * DataWrapper class
  * AI Project 2
  * **********************/
+
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Learning
+namespace Learning.DataWrapper
 {
     /* Abstract class to load data from files */
-    public abstract class DataWrapper<T, V> where T : IComparable<T>
-                                            where V : IComparable<V>
+    public abstract class DataWrapper<TT, TV> where TT : IComparable<TT>
+                                            where TV : IComparable<TV>
     {
         // type of dataWrapper
-        public string type;
+        public string Type;
         
         // lists of attributes and their possible answers
-        public List<List<T>> AttributeAnswers;
-        public List<Attribute<T>> Attributes;
+        public List<List<TT>> AttributeAnswers;
+        public List<Attribute<TT>> Attributes;
 
         /* Must constructor with the type of data wrapper */
-        public DataWrapper(string type) {
-            this.type = type;
-            AttributeAnswers = new List<List<T>>();
-            Attributes = new List<Attribute<T>>();
+        protected DataWrapper(string type) {
+            this.Type = type;
+            AttributeAnswers = new List<List<TT>>();
+            Attributes = new List<Attribute<TT>>();
         }
 
         /* Load training set from a file */
-        abstract public List<Example<T, V>> LoadTrainingSet(string filename);
+        abstract public List<Example<TT, TV>> LoadTrainingSet(string filename);
 
         /* Load data from a file to predict */
-        abstract public List<Example<T, V>> LoadData(string filename);
+        abstract public List<Example<TT, TV>> LoadData(string filename);
     }
 }

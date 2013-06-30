@@ -3,18 +3,18 @@
  * NurseryData class
  * AI Project 2
  * **********************/
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 
-namespace Learning
+namespace Learning.DataWrapper
 {
     public class NurseryData : DataWrapper<string, string>
     {
-        private string[] attrs;
+        private readonly string[] attrs;
+
         public NurseryData() : base("nursery") {
             attrs = new string[8]{ "parents", "has-nurs", "form", 
                                     "children", "housing", "finance",
@@ -29,21 +29,21 @@ namespace Learning
             AttributeAnswers.Add(new List<string>(new string[] { "nonprob", "slightly_prob", "problematic" }));
             AttributeAnswers.Add(new List<string>(new string[] { "recommended", "priority", "not_recom" }));
 
-            for (int i = 0; i < attrs.Length; i++) {
+            for (var i = 0; i < attrs.Length; i++) {
                 Attributes.Add(new Attribute<string>(attrs[i], AttributeAnswers[i]));
             }
         }
 
         // Throws an ArgumentException if it is not formatted correctly
         public override List<Example<string, string>> LoadTrainingSet(string filename) {
-            List<Example<string, string>> examples = new List<Example<string, string>>();
+            var examples = new List<Example<string, string>>();
 
-            using (StreamReader reader = new StreamReader(filename)) {
+            using (var reader = new StreamReader(filename)) {
                 string line;
-                int c = 0;
+                var c = 0;
                 while ((line = reader.ReadLine()) != null) {
-                    string[] input = line.Split(',');
-                    string[] selectedAnswers = input.Take(input.Count() - 1).ToArray();
+                    var input = line.Split(',');
+                    var selectedAnswers = input.Take(input.Count() - 1).ToArray();
                     examples.Add(new Example<string, string>(new List<string>(attrs), new List<String>(selectedAnswers),
                          AttributeAnswers, input[input.Count() - 1], c));
 

@@ -12,68 +12,63 @@ using System.Threading.Tasks;
 namespace Learning
 {
     /* Example class */
-    public class Example<T, V> where T : System.IComparable<T>
-                               where V : System.IComparable<V>
+    public class Example<TT, TV> where TT : System.IComparable<TT>
+                               where TV : System.IComparable<TV>
     {
         // index in larger example list
-        private int index;
-        
+
         // id for comparison
-        private int id;
+        private readonly int id;
 
         // list of attributes
-        public List<Attribute<T>> Attributes;
+        public List<Attribute<TT>> Attributes;
 
         // final classification
-        public V Classification;
+        public TV Classification;
 
         // getters and setters
-        public int Index {
-            get { return this.index; }
-            set { this.index = value; }
-        }
+        public int Index { get; set; }
 
         public int Id {
             get { return this.id; }
         }
 
         /* Example constructor fills in attributes list and other fields */
-        public Example(List<string> questions, List<T> selectedAnswers, List<List<T>> attributeAnswers, V output, int index, int id) {
-            if ((questions.Count == attributeAnswers.Count) && (questions.Count == selectedAnswers.Count)) {
-                Attributes = new List<Attribute<T>>();
-                int c = 0;
-                foreach (List<T> answers in attributeAnswers) {
-                    Attribute<T> tempAttr = new Attribute<T>(questions[c], answers);
+        public Example(IReadOnlyList<string> questions, IReadOnlyList<TT> selectedAnswers, IReadOnlyCollection<List<TT>> attributeAnswers,
+            TV output, int index, int id){
+            if ((questions.Count != attributeAnswers.Count) || (questions.Count != selectedAnswers.Count)){
+                throw new ArgumentException(
+                    "The number of questions must be the same as the number of lists of answers and the number of selected answers");
+            } else {
+                Attributes = new List<Attribute<TT>>();
+                var c = 0;
+                foreach (var tempAttr in 
+                    attributeAnswers.Select(answers => new Attribute<TT>(questions[c], answers))){
                     tempAttr.SelectedAnswer = selectedAnswers[c];
                     Attributes.Add(tempAttr);
                     c++;
                 }
                 this.Classification = output;
-                this.index = index;
+                this.Index = index;
                 this.id = id;
-            } else {
-                throw new ArgumentException("The number of questions must be the same as the number of lists of answers and the number of selected answers");
             }
         }
 
         /* Call the other constructor with a default id of 0 */
-        public Example(List<string> questions, List<T> selectedAnswers, List<List<T>> attributeAnswers, V output, int index) :
+        public Example(IReadOnlyList<string> questions, IReadOnlyList<TT> selectedAnswers, IReadOnlyCollection<List<TT>> attributeAnswers, TV output, int index) :
             this(questions, selectedAnswers, attributeAnswers, output, index, 0) {  }
 
         /* Determine if the example contains the input answer to the input question */
-        public bool ContainsAnswer(string question, T answer) {
-            foreach (Attribute<T> attr in Attributes) {
-                if (question.CompareTo(attr.Question) == 0) {
-                    return attr.SelectedAnswer.CompareTo(answer) == 0;
-                }
-            }
-            return false;
+        public bool ContainsAnswer(string question, TT answer){
+            return (from attr in Attributes 
+                    where question.CompareTo(attr.Question) == 0 
+                    select attr.SelectedAnswer.CompareTo(answer) == 0).FirstOrDefault();
         }
 
         /* Set the Attributes to the input answers */
-        public void SetAnswers(T[] answers) {
-            int c = 0;
-            foreach (Attribute<T> attr in Attributes) {
+        public void SetAnswers(TT[] answers) {
+            var c = 0;
+            foreach (var attr in Attributes) {
                 attr.SelectedAnswer = answers[c];
                 c++;
             }

@@ -12,27 +12,27 @@ using System.Threading.Tasks;
 namespace Learning
 {
     /* DTree Class (really just DStumps for now) */
-    public class DTree<T, V> where T : IComparable<T>
-                          where V : IComparable<V>
+    public class DTree<TT, TV> where TT : IComparable<TT>
+                          where TV : IComparable<TV>
     {
         // root node
-        private Node<T, V> root;
+        private readonly Node<TT, TV> root;
 
         // list of all possible classifications
-        private List<V> classifications;
+        private readonly List<TV> classifications;
 
         // getter
-        public Node<T, V> Root {
+        public Node<TT, TV> Root {
             get { return this.root; }
         }
 
         /* Default constructor */
         public DTree() {
-            root = new Node<T, V>();
+            root = new Node<TT, TV>();
         }
 
         /* Build the DStump when we create a DTree object */
-        public DTree(List<Example<T, V>> examples, List<Attribute<T>> attributes, double[] weights, List<V> classifications) {
+        public DTree(List<Example<TT, TV>> examples, List<Attribute<TT>> attributes, double[] weights, List<TV> classifications) {
             this.classifications = classifications;
             if (weights.Count() != examples.Count) {
                 throw new ArgumentException("There must be a weight for each example");
@@ -41,43 +41,38 @@ namespace Learning
         }
 
         /* Build-DStump function */
-        private Node<T,V> buildDStump(List<Example<T, V>> examples, List<Attribute<T>> attributes, double[] weights) {
+        private Node<TT,TV> buildDStump(List<Example<TT, TV>> examples, List<Attribute<TT>> attributes, double[] weights) {
             // find best attribute
-            Attribute<T> b = bestAttribute(examples, attributes, weights);
-            Node<T, V> node = new Node<T, V>(b);
-            foreach (T answer in b.Answers) {
-                List<Example<T, V>> selectedExamples = getSelectedExamples(examples, b.Question, answer);
+            var b = bestAttribute(examples, attributes, weights);
+            var node = new Node<TT, TV>(b);
+            foreach (var selectedExamples in 
+                b.Answers.Select(answer => getSelectedExamples(examples, b.Question, answer))){
+
                 if (selectedExamples.Count == 0) {
                     // examples = {}
-                    Node<T, V> child = new Node<T, V>();
+                    var child = new Node<TT, TV>();
                     child.SetClassification(classifications[new Random().Next(classifications.Count - 1)]);
                     node.AddChild(child);
                 } else {
                     // check to see if every example agrees
-                    bool agreementFlag = true;
-                    V output = selectedExamples[0].Classification;
-                    foreach (Example<T,V> example in selectedExamples) {
-                        if (!(example.Classification.Equals(output))) {
-                            agreementFlag = false;
-                            break;
-                        }
-                    }
+                    var output = selectedExamples[0].Classification;
+                    var agreementFlag = selectedExamples.All(example => example.Classification.Equals(output));
                     if (agreementFlag) {
                         // set classification to agreement
-                        Node<T,V> child = new Node<T,V>();
+                        var child = new Node<TT,TV>();
                         child.SetClassification(output);
                         node.AddChild(child);
                     } else {
                         // find majority classification
-                        double[] ws = new double[classifications.Count];
-                        for (int e = 0; e < selectedExamples.Count; e++) {
-                            int idx = classifications.IndexOf(selectedExamples[e].Classification);
+                        var ws = new double[classifications.Count];
+                        foreach (var idx in 
+                            selectedExamples.Select(t => classifications.IndexOf(t.Classification))){
                             ws[idx] += weights[idx];
                         }
-                        Node<T,V> child = new Node<T,V>();
-                        int maxIndex = ws.Select( (value, index) => new { Value = value, Index = index} )
+                        var child = new Node<TT,TV>();
+                        var maxIndex = ws.Select( (value, index) => new { Value = value, Index = index} )
                             .Aggregate
-                                ( (x, y) => (x.Value > y.Value) ? x : y)
+                            ( (x, y) => (x.Value > y.Value) ? x : y)
                             .Index;
                         child.SetClassification(classifications[maxIndex]);
                         node.AddChild(child);
@@ -88,55 +83,44 @@ namespace Learning
         }
 
         /* Get the examples whose answer to the input question is the input answer */
-        private List<Example<T,V>> getSelectedExamples(List<Example<T,V>> examples, string question, T answer) {
-            List<Example<T,V>> answeredExamples = new List<Example<T,V>>();
-            foreach (Example<T,V> example in examples) {
-                if (example.ContainsAnswer(question, answer)) {
-                    answeredExamples.Add(example);
-                }
-            }
-            return answeredExamples;
+        private List<Example<TT,TV>> getSelectedExamples(IEnumerable<Example<TT, TV>> examples, string question, TT answer){
+            return examples.Where(example => example.ContainsAnswer(question, answer)).ToList();
         }
 
         /* Find the best attribute to use (the lowest entropy) */
-        private Attribute<T> bestAttribute(List<Example<T,V>> examples, List<Attribute<T>> attributes, double[] weights) {
-            double bestE = Double.MaxValue;
-            Attribute<T> bestAttr = null;
-            foreach (Attribute<T> attr in attributes) {
-                double totalE = 0.0;
-                foreach (T answer in attr.Answers) {
-                    List<Example<T,V>> selectedExamples = getSelectedExamples(examples, attr.Question, answer);
-                    List<double> selectedWeights = new List<double>();
-                    foreach (Example<T,V> ex in selectedExamples) {
-                        selectedWeights.Add(weights[ex.Index]);
-                    }
-                    double sumSelectedWeights = selectedWeights.Sum();
-                    double sumWeights = weights.Sum();
+        private Attribute<TT> bestAttribute(List<Example<TT,TV>> examples, List<Attribute<TT>> attributes, double[] weights) {
+            var bestE = Double.MaxValue;
+            Attribute<TT> bestAttr = null;
+            foreach (var attr in attributes) {
+                var totalE = 0.0;
+                // ReSharper disable LoopCanBeConvertedToQuery
+                foreach (var answer in attr.Answers) {
+                    // ReSharper restore LoopCanBeConvertedToQuery
+                    var selectedExamples = getSelectedExamples(examples, attr.Question, answer);
+                    var selectedWeights = selectedExamples.Select(ex => weights[ex.Index]).ToList();
+                    var sumSelectedWeights = selectedWeights.Sum();
+                    var sumWeights = weights.Sum();
 
-                    double E = entropy(selectedExamples, selectedWeights.ToArray());
-                    totalE += (sumSelectedWeights / sumWeights) * E;
+                    var e = entropy(selectedExamples, selectedWeights.ToArray());
+                    totalE += (sumSelectedWeights / sumWeights) * e;
                 }
-                if (totalE < bestE) {
-                    bestE = totalE;
-                    bestAttr = attr;
-                }
+                if (!(totalE < bestE)) continue;
+
+                bestE = totalE;
+                bestAttr = attr;
             }
             return bestAttr;
         }
 
         /* Find the entropy of a list of examples and weights */
-        private double entropy(List<Example<T,V>> examples, double[] weights) {
-            double[] ws = new double[classifications.Count];
-            double totalWeight = weights.Sum();
-            for (int c = 0; c < examples.Count; c++) {
-                int idx = classifications.IndexOf(examples[c].Classification);
+        private double entropy(IReadOnlyList<Example<TT, TV>> examples, IList<double> weights) {
+            var ws = new double[classifications.Count];
+            var totalWeight = weights.Sum();
+            for (var c = 0; c < examples.Count; c++) {
+                var idx = classifications.IndexOf(examples[c].Classification);
                 ws[idx] += weights[c];
             }
-            double ent = 0.0;
-            foreach (double w in ws) {
-                ent -= (w / totalWeight) * Math.Log(w / totalWeight, classifications.Count);
-            }
-            return ent;
+            return ws.Aggregate(0.0, (current, w) => current - (w/totalWeight) * Math.Log(w/totalWeight, classifications.Count));
         }
     }
 }
