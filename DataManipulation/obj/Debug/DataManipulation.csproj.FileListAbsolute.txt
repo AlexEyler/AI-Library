@@ -1,6 +1,0 @@
-C:\Users\Alex\Documents\School\AI\Project 2\MarketLearner\DataManipulation\obj\Debug\DataManipulation.csprojResolveAssemblyReference.cache
-C:\Users\Alex\Documents\School\AI\Project 2\MarketLearner\DataManipulation\bin\Debug\DataManipulation.exe.config
-C:\Users\Alex\Documents\School\AI\Project 2\MarketLearner\DataManipulation\bin\Debug\DataManipulation.exe
-C:\Users\Alex\Documents\School\AI\Project 2\MarketLearner\DataManipulation\bin\Debug\DataManipulation.pdb
-C:\Users\Alex\Documents\School\AI\Project 2\MarketLearner\DataManipulation\obj\Debug\DataManipulation.exe
-C:\Users\Alex\Documents\School\AI\Project 2\MarketLearner\DataManipulation\obj\Debug\DataManipulation.pdb
