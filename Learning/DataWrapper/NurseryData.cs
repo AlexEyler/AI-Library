@@ -11,7 +11,17 @@ using System.IO;
 
 namespace Learning.DataWrapper
 {
-    public class NurseryData : DataWrapper<string, string>
+
+    public enum NurseryClassificationId
+    {
+        NotRecommend = 0,
+        Recommend = 1,
+        VeryRecommend = 2,
+        Priority = 3,
+        SpecPrior = 4
+    }
+
+    public class NurseryData : DataWrapper<string>
     {
         private readonly string[] attrs;
 
@@ -35,8 +45,16 @@ namespace Learning.DataWrapper
         }
 
         // Throws an ArgumentException if it is not formatted correctly
-        public override List<Example<string, string>> LoadTrainingSet(string filename) {
-            var examples = new List<Example<string, string>>();
+        public override List<Example<string>> LoadTrainingSet(string filename) {
+            var examples = new List<Example<string>>();
+            var classes = new Dictionary<string, NurseryClassificationId>
+                              {
+                                  {"not_recom", NurseryClassificationId.NotRecommend},
+                                  {"recommend", NurseryClassificationId.Recommend},
+                                  {"very_recom", NurseryClassificationId.VeryRecommend},
+                                  {"priority", NurseryClassificationId.Priority},
+                                  {"spec_prior", NurseryClassificationId.SpecPrior}
+                              };
 
             using (var reader = new StreamReader(filename)) {
                 string line;
@@ -44,8 +62,8 @@ namespace Learning.DataWrapper
                 while ((line = reader.ReadLine()) != null) {
                     var input = line.Split(',');
                     var selectedAnswers = input.Take(input.Count() - 1).ToArray();
-                    examples.Add(new Example<string, string>(new List<string>(attrs), new List<String>(selectedAnswers),
-                         AttributeAnswers, input[input.Count() - 1], c));
+                    examples.Add(new Example<string>(new List<string>(attrs), new List<String>(selectedAnswers),
+                         AttributeAnswers, (int) classes[input[input.Count() - 1]], c));
 
                     c++;
                 }
@@ -54,8 +72,19 @@ namespace Learning.DataWrapper
             return examples;
         }
 
-        public override List<Example<string, string>> LoadData(string filename) {
+        public override List<Example<string>> LoadData(string filename) {
             throw new NotImplementedException();
+        }
+
+        public override string Determiniation(){
+            var argmax = -1;
+            var max = -1;
+            for (var i = 0; i < ClassificationsCount.Count(); i++){
+                if (ClassificationsCount[i] <= max) continue;
+                argmax = i;
+                max = ClassificationsCount[i];
+            }
+            return "The model recommendation is: " + Enum.GetName(typeof(NurseryClassificationId), argmax);
         }
     }
 }

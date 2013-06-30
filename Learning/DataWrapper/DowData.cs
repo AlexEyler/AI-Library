@@ -11,8 +11,14 @@ using System.IO;
 
 namespace Learning.DataWrapper
 {
+    /* ClassificationId into array */
+    public enum DowClassificationId {
+        Up = 0,
+        Down = 1
+    }
+
     /* Implementation of DataWrapper for the DOW prediction project */
-    public class DowData : DataWrapper<string, bool>
+    public class DowData : DataWrapper<string>
     {
         // Attribute questions and their selected answer
         private readonly Dictionary<string, string> attrs;
@@ -37,6 +43,8 @@ namespace Learning.DataWrapper
             for (var i = 0; i < temp.Length; i++) {
                 Attributes.Add(new Attribute<string>(temp[i], AttributeAnswers[i]));
             }
+
+            ClassificationsCount = new int[2];
         }
 
         /* Load the Training Set from a filename
@@ -45,8 +53,7 @@ namespace Learning.DataWrapper
          * This will output a list of examples, who have each ticker as an attribute, and the possible answers (each
          * attribute has the same possible answers).
          */
-        public override List<Example<string, bool>> LoadTrainingSet(string filename) {
-            var examples = new List<Example<string, bool>>();
+        public override List<Example<string>> LoadTrainingSet(string filename) {
             var totals = findTotals(filename);
 
             // Read each line from the training set file, and throw an
@@ -55,7 +62,7 @@ namespace Learning.DataWrapper
             using (var reader = new StreamReader(filename)) {
                 string line;
                 var answers =
-                    new Dictionary<Example<string, bool>, Dictionary<string, string>>();
+                    new Dictionary<Example<string>, Dictionary<string, string>>();
 
                 while ((line = reader.ReadLine()) != null) {
                     var input = line.Split(',');
@@ -71,8 +78,8 @@ namespace Learning.DataWrapper
                         // haven't found example, create a new one and fill in an attribute's selectedAnswer
                         var tempAttrs = new Dictionary<string, string>(attrs);
                         tempAttrs[ticker] = discretize(open, close, volume, totals.Key, totals.Value);
-                        example = new Example<string, bool>(new List<string>(attrs.Keys), new List<string>(tempAttrs.Values),
-                            AttributeAnswers, input[input.Count() - 1].Equals("True"), 0, date);
+                        example = new Example<string>(new List<string>(attrs.Keys), new List<string>(tempAttrs.Values),
+                            AttributeAnswers, input[input.Count() - 1].Equals("True") ? (int)DowClassificationId.Up : (int)DowClassificationId.Down, 0, date);
                         answers.Add(example, tempAttrs);
                     } else {
                         // we have found an example, update an attribute's selectedAnswer
@@ -81,11 +88,11 @@ namespace Learning.DataWrapper
                         example.SetAnswers(tempAttrs.Values.ToArray());
                     }
                 }
-                examples = answers.Keys.ToList();
+                var examples = answers.Keys.ToList();
 
                 // Remove any missing data (if there aren't 30 tickers for each day)
                 var c = 0;
-                var okExamples = new List<Example<string, bool>>();
+                var okExamples = new List<Example<string>>();
                 foreach (var ex in examples) {
                     var ok = true;
                     foreach (var attr in 
@@ -104,7 +111,7 @@ namespace Learning.DataWrapper
         /* Similar to the LoadTrainingData function, but this will load a file with no known 
          * classification (to predict on)
          * */
-        public override List<Example<string, bool>> LoadData(string filename) {
+        public override List<Example<string>> LoadData(string filename) {
             var totals = findTotals(filename);
 
             // Read each line from the training set file, and throw an
@@ -112,7 +119,7 @@ namespace Learning.DataWrapper
             // or IO error)
             using (var reader = new StreamReader(filename)) {
                 string line;
-                var answers = new Dictionary<Example<string, bool>, Dictionary<string, string>>();
+                var answers = new Dictionary<Example<string>, Dictionary<string, string>>();
 
                 while ((line = reader.ReadLine()) != null) {
                     var input = line.Split(',');
@@ -128,8 +135,8 @@ namespace Learning.DataWrapper
                         // haven't found example, create a new one and fill in an attribute's selectedAnswer
                         var tempAttrs = new Dictionary<string, string>(attrs);
                         tempAttrs[ticker] = discretize(open, close, volume, totals.Key, totals.Value);
-                        example = new Example<string, bool>(new List<string>(attrs.Keys), new List<string>(tempAttrs.Values),
-                            AttributeAnswers, false, 0, date);
+                        example = new Example<string>(new List<string>(attrs.Keys), new List<string>(tempAttrs.Values),
+                            AttributeAnswers, (int)DowClassificationId.Up, 0, date);
                         answers.Add(example, tempAttrs);
                     } else {
                         // we have found an example, update an attribute's selectedAnswer
@@ -143,7 +150,7 @@ namespace Learning.DataWrapper
 
                 // Remove any missing data (if there aren't 30 tickers for each day)
                 var c = 0;
-                var okExamples = new List<Example<string, bool>>();
+                var okExamples = new List<Example<string>>();
                 foreach (var ex in examples) {
                     var ok = true;
                     foreach (var attr in 
@@ -159,6 +166,16 @@ namespace Learning.DataWrapper
             }
         }
 
+        public override string Determiniation() {
+            if (ClassificationsCount[(int)DowClassificationId.Up] > ClassificationsCount[(int)DowClassificationId.Down]) {
+                return "The model predicts that the NASDAQ will go up today.";
+            }
+            if (ClassificationsCount[(int)DowClassificationId.Up] < ClassificationsCount[(int)DowClassificationId.Down]) {
+                return "The model predicts that the NASDAQ will go down today.";
+            }
+            return "The model predicts that the NASDAQ will stay the same today.";
+
+        }
         /* Find the total volume and total count from the input data */
         private KeyValuePair<long, int> findTotals(string filename) {
             var volume = 0L;
@@ -175,7 +192,7 @@ namespace Learning.DataWrapper
         }
 
         /* Find Example if it exists */
-        private Example<string, bool> findExample(IEnumerable<Example<string, bool>> examples, int date){
+        private Example<string> findExample(IEnumerable<Example<string>> examples, int date){
             return examples.FirstOrDefault(example => example.Id == date);
         }
 
