@@ -6,3 +6,6 @@ C:\Users\Alex\Documents\School\AI\Project 2\MarketLearner\TestTraining\bin\Debug
 C:\Users\Alex\Documents\School\AI\Project 2\MarketLearner\TestTraining\obj\Debug\TestTraining.csprojResolveAssemblyReference.cache
 C:\Users\Alex\Documents\School\AI\Project 2\MarketLearner\TestTraining\obj\Debug\TestTraining.exe
 C:\Users\Alex\Documents\School\AI\Project 2\MarketLearner\TestTraining\obj\Debug\TestTraining.pdb
+D:\School\AI\Project 2\MarketLearner\AI-Library\TestTraining\bin\Debug\TestTraining.exe.config
+D:\School\AI\Project 2\MarketLearner\AI-Library\TestTraining\obj\Debug\TestTraining.exe
+D:\School\AI\Project 2\MarketLearner\AI-Library\TestTraining\obj\Debug\TestTraining.pdb
